@@ -1,0 +1,33 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // https://mvnrepository.com/artifact/javax.xml.stream/stax-api
+    implementation 'javax.xml.stream:stax-api:1.0-2'
+
+    // https://mvnrepository.com/artifact/log4j/log4j
+    implementation 'log4j:log4j:1.2.17'
+
+    // https://mvnrepository.com/artifact/org.apache.commons/commons-compress
+    implementation 'org.apache.commons:commons-compress:1.21'
+
+    // https://mvnrepository.com/artifact/commons-cli/commons-cli
+    implementation 'commons-cli:commons-cli:1.5.0'
+
+}
+test {
+    useJUnitPlatform()
+}
+
+application {
+    mainClass = 'XMLApp'
+}
