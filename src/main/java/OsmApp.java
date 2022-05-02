@@ -5,11 +5,11 @@ import utils.osm.OsmReader;
 
 import java.io.InputStream;
 
-public class XMLApp {
+public class OsmApp {
     public static void main(String[] args) {
-        Logger logger = Logger.getLogger(XMLApp.class);
+        Logger logger = Logger.getLogger(OsmApp.class);
         try {
-            InputStream inputStream = ArchiveReader.getBz2InputStream(XMLApp.class.getResourceAsStream("RU-NVS.osm.bz2"));
+            InputStream inputStream = ArchiveReader.getBz2InputStream(OsmApp.class.getResourceAsStream("RU-NVS.osm.bz2"));
 
             OsmData data = OsmReader.readData(inputStream);
 
