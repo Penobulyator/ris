@@ -1,10 +1,10 @@
-package utils;
+package utils.osm;
 
 import java.util.List;
 import java.util.Map;
 
-public class OpenStreetMapData {
-    public OpenStreetMapData(List<Map.Entry<String, Integer>> userToChangesCount, List<Map.Entry<String, Integer>> tagToNodeCount) {
+public class OsmData {
+    public OsmData(List<Map.Entry<String, Integer>> userToChangesCount, List<Map.Entry<String, Integer>> tagToNodeCount) {
         this.userToChangesCount = userToChangesCount;
         this.tagToNodeCount = tagToNodeCount;
     }

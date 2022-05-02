@@ -1,4 +1,4 @@
-package utils;
+package utils.osm;
 
 import generated.Node;
 import generated.Osm;
@@ -17,8 +17,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class OpenStreetMapReader {
-    public static OpenStreetMapData readData(InputStream inputXMLStream) throws XMLStreamException, JAXBException {
+public class OsmReader {
+    public static OsmData readData(InputStream inputXMLStream) throws XMLStreamException, JAXBException {
         XMLInputFactory factory = XMLInputFactory.newInstance();
         factory.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, false);
 
@@ -48,7 +48,7 @@ public class OpenStreetMapReader {
             }
         }
 
-        return new OpenStreetMapData(sortMapByValue(userToChangesCount), sortMapByValue(tagToNodeCount));
+        return new OsmData(sortMapByValue(userToChangesCount), sortMapByValue(tagToNodeCount));
     }
 
     private static List<Map.Entry<String, Integer>> sortMapByValue(Map<String, Integer> map) {
