@@ -1,17 +1,9 @@
-import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.apache.log4j.Logger;
 import utils.ArchiveReader;
 import utils.OpenStreetMapData;
 import utils.OpenStreetMapReader;
 
-import javax.xml.stream.XMLStreamException;
-import java.io.BufferedInputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Map;
 
 public class XMLApp {
     public static void main(String[] args) {
@@ -22,9 +14,8 @@ public class XMLApp {
             OpenStreetMapData data = OpenStreetMapReader.readData(inputStream);
 
             printResult(data);
-
-        } catch (IOException | XMLStreamException e) {
-            logger.error(e);
+        } catch (Exception e) {
+            logger.error(e.toString());
         }
     }
 
@@ -38,9 +29,6 @@ public class XMLApp {
         for (var entry : data.getTagToNodeCount()) {
             System.out.println(entry.getKey() + " " + entry.getValue());
         }
-
-
-
     }
 
 

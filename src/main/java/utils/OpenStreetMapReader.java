@@ -1,34 +1,49 @@
 package utils;
 
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLEventReader;
+import generated.Node;
+import generated.Osm;
+import generated.Tag;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.StartElement;
-import javax.xml.stream.events.XMLEvent;
+import javax.xml.stream.XMLStreamReader;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class OpenStreetMapReader {
-    public static OpenStreetMapData readData(InputStream inputXMLStream) throws XMLStreamException {
-        XMLEventReader eventReader = XMLInputFactory.newInstance().createXMLEventReader(inputXMLStream);
+    public static OpenStreetMapData readData(InputStream inputXMLStream) throws XMLStreamException, JAXBException {
+        XMLInputFactory factory = XMLInputFactory.newInstance();
+        factory.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, false);
+
+        XMLStreamReader reader = factory.createXMLStreamReader(inputXMLStream);
 
         Map<String, Integer> userToChangesCount = new HashMap<>();
         Map<String, Integer> tagToNodeCount = new HashMap<>();
-        while (eventReader.hasNext()) {
-            XMLEvent event = eventReader.nextEvent();
-            if (event.isStartElement()) {
-                StartElement startElement = event.asStartElement();
-                if (startElement.getName().getLocalPart().equals("node")) {
-                    //update tags count
-                    Set<String> nodeTags = getNodeTags(eventReader);
-                    for (String nodeTag : nodeTags) {
-                        tagToNodeCount.put(nodeTag, tagToNodeCount.getOrDefault(nodeTag, 0) + 1);
-                    }
 
-                    //update user changes count
-                    String user = startElement.getAttributeByName(new QName("user")).getValue();
-                    userToChangesCount.put(user, userToChangesCount.getOrDefault(user, 0) + 1);
+        JAXBContext context = JAXBContext.newInstance(Osm.class);
+        Unmarshaller unmarshaller = context.createUnmarshaller();
+
+        while (reader.hasNext()) {
+            int eventType = reader.next();
+            if (eventType != XMLStreamConstants.START_ELEMENT)
+                continue;
+            String nodeName = reader.getName().getLocalPart();
+
+            if (nodeName.equals("node")) {
+                Node node = unmarshaller.unmarshal(reader, Node.class).getValue();
+
+                String user = node.getUser();
+                userToChangesCount.put(user, userToChangesCount.getOrDefault(user, 0) + 1);
+
+                for (Tag tag : node.getTag()) {
+                    tagToNodeCount.put(tag.getK(), tagToNodeCount.getOrDefault(tag.getK(), 0) + 1);
                 }
             }
         }
@@ -36,23 +51,7 @@ public class OpenStreetMapReader {
         return new OpenStreetMapData(sortMapByValue(userToChangesCount), sortMapByValue(tagToNodeCount));
     }
 
-    private static Set<String> getNodeTags(XMLEventReader eventReader) throws XMLStreamException {
-        Set<String> tags = new HashSet<>();
-        while (true) {
-            XMLEvent xmlEvent = eventReader.nextEvent();
-            if (xmlEvent.isStartElement()) {
-                StartElement startElement = xmlEvent.asStartElement();
-                if (startElement.getName().getLocalPart().equals("tag")) {
-                    tags.add(startElement.getAttributeByName(new QName("k")).getValue());
-                }
-            } else if (xmlEvent.isEndElement()) {
-                if (xmlEvent.asEndElement().getName().getLocalPart().equals("node"))
-                    return tags;
-            }
-        }
-    }
-
-    private static List<Map.Entry<String, Integer>> sortMapByValue(Map<String, Integer> map){
+    private static List<Map.Entry<String, Integer>> sortMapByValue(Map<String, Integer> map) {
         List<Map.Entry<String, Integer>> list = new ArrayList<>(map.entrySet());
         list.sort(Map.Entry.comparingByValue());
         return list;
