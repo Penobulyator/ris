@@ -1,8 +1,7 @@
-package utils.osm;
+package org.example.utils;
 
 import generated.Node;
 import generated.Osm;
-import generated.Tag;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
