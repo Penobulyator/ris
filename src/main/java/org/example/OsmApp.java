@@ -3,15 +3,12 @@ package org.example;
 import org.example.entity.Node;
 import org.example.repository.NodeRepository;
 import org.example.utils.ArchiveReader;
+import org.example.utils.OsmReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-
-import org.example.utils.OsmReader;
 import org.springframework.util.ResourceUtils;
 
 import java.io.FileInputStream;
@@ -35,11 +32,12 @@ public class OsmApp implements CommandLineRunner {
         OsmReader osmReader = new OsmReader(inputStream);
 
         long count = 0;
-        for (generated.Node node = osmReader.readNextNode(); node != null; node = osmReader.readNextNode()) {
+        generated.Node node = osmReader.readNextNode();
+        do {
             nodeRepository.save(new Node(node));
+            count++;
 
-            if (count++ == 100000)
-                break;
-        }
+            node = osmReader.readNextNode();
+        } while (node != null && count < 10000);
     }
 }

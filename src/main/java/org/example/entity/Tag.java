@@ -13,16 +13,19 @@ import javax.persistence.*;
 @AllArgsConstructor
 public class Tag {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "node_id")
     private Node node;
 
-    private String name;
+    private String k;
+
+    private String v;
 
     public Tag(generated.Tag generatedTag) {
-        name = generatedTag.getK();
+        k = generatedTag.getK();
+        v = generatedTag.getV();
     }
 }

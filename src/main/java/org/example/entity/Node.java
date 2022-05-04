@@ -26,9 +26,15 @@ public class Node {
     @JoinColumn(name = "node_id")
     private List<Tag> tags;
 
+    double lat;
+
+    double lon;
+
     public Node(generated.Node generatedNode) {
         nodeId = generatedNode.getId().longValue();
         userName = generatedNode.getUser();
+        lat = generatedNode.getLat();
+        lon = generatedNode.getLon();
 
         tags = generatedNode.getTag().stream().map(Tag::new).collect(Collectors.toList());
     }
